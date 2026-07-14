@@ -1,5 +1,9 @@
 # RAGforyl
 
+<p align="center">
+  <img src="docs/assets/ragforyl-hero.png" alt="RAGforyl 从中文文档到可追溯知识图谱问答的端到端流程" width="100%" />
+</p>
+
 RAGforyl 是一个面向中文资料的端到端知识图谱 RAG 工具。把 PDF、Word、Markdown 或文本文件放入系统，即可完成：
 
 1. 文档解析与来源清单
