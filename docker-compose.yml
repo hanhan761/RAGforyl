@@ -1,0 +1,20 @@
+name: ragforyl
+
+services:
+  ragforyl:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      RAGFORYL_DATA_DIR: /app/data
+      RAGFORYL_EXTRACTION_MODE: ${RAGFORYL_EXTRACTION_MODE:-auto}
+      RAGFORYL_CHUNK_SIZE: ${RAGFORYL_CHUNK_SIZE:-1200}
+      RAGFORYL_CHUNK_OVERLAP: ${RAGFORYL_CHUNK_OVERLAP:-120}
+      RAGFORYL_MAX_UPLOAD_MB: ${RAGFORYL_MAX_UPLOAD_MB:-30}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_MODEL: ${LLM_MODEL:-}
+      LLM_TIMEOUT_SECONDS: ${LLM_TIMEOUT_SECONDS:-90}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

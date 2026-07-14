@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="RAGforyl：从文档到可追溯知识图谱的一站式工具" />
+    <title>RAGforyl · 知识图谱工作台</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="RAGforyl 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" role="img">
+            <path d="M9 28V12l11-6 11 6v16l-11 6-11-6Z" fill="none" stroke="currentColor" stroke-width="2.2" />
+            <circle cx="20" cy="11" r="2.7" />
+            <circle cx="13.5" cy="24.5" r="2.7" />
+            <circle cx="26.5" cy="24.5" r="2.7" />
+            <path d="m18.8 13.3-4.1 8.8m6.5-8.8 4.1 8.8M16.2 25h7.6" fill="none" stroke="currentColor" stroke-width="2" />
+          </svg>
+        </span>
+        <span>
+          <strong>RAGforyl</strong>
+          <small>Knowledge Graph Studio</small>
+        </span>
+      </a>
+      <div class="topbar-status">
+        <span id="mode-badge" class="mode-badge">正在检查环境</span>
+        <span id="version-label">v0.1.0</span>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="intro">
+        <div>
+          <span class="eyebrow">EVIDENCE-GROUNDED GRAPH RAG</span>
+          <h1>把资料放进来，<br />得到一张可追溯的知识图谱。</h1>
+        </div>
+        <p>
+          上传 PDF、Word、Markdown 或文本，系统会自动完成分块、实体关系抽取、证据回链与图谱检索。
+          不配置模型也能离线运行。
+        </p>
+      </section>
+
+      <section class="workspace">
+        <aside class="panel source-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="step-number">01</span>
+              <h2>准备资料</h2>
+            </div>
+            <span id="source-count" class="counter">0 个文件</span>
+          </div>
+
+          <label id="dropzone" class="dropzone" for="file-input">
+            <input id="file-input" type="file" multiple accept=".txt,.md,.markdown,.pdf,.docx" />
+            <span class="upload-icon" aria-hidden="true">↑</span>
+            <strong>拖入文件或点击选择</strong>
+            <small>PDF / DOCX / MD / TXT</small>
+          </label>
+
+          <div id="upload-state" class="inline-state" aria-live="polite"></div>
+          <div id="source-list" class="source-list"></div>
+
+          <div class="build-block">
+            <div class="build-copy">
+              <span class="step-number">02</span>
+              <div>
+                <h2>构建图谱</h2>
+                <p>新索引通过质量门禁后才会替换旧版本。</p>
+              </div>
+            </div>
+            <button id="build-button" class="primary-button" type="button">开始构建</button>
+            <div id="build-state" class="inline-state" aria-live="polite"></div>
+          </div>
+        </aside>
+
+        <section class="panel query-panel">
+          <div class="panel-heading query-heading">
+            <div>
+              <span class="step-number">03</span>
+              <h2>检索与问答</h2>
+            </div>
+            <span id="index-badge" class="index-badge">尚未构建</span>
+          </div>
+
+          <form id="query-form" class="query-form">
+            <label for="question-input">向知识图谱提问</label>
+            <div class="query-composer">
+              <textarea
+                id="question-input"
+                rows="3"
+                maxlength="2000"
+                placeholder="例如：升力由哪些因素决定？"
+                required
+              ></textarea>
+              <button id="query-button" type="submit" aria-label="提交问题">查询</button>
+            </div>
+          </form>
+
+          <div id="empty-result" class="empty-result">
+            <div class="empty-symbol" aria-hidden="true">◎</div>
+            <h3>答案会带着证据回来</h3>
+            <p>命中的概念、关系和原始文档片段会同时展示，方便核验，不让图谱成为黑箱。</p>
+          </div>
+
+          <div id="result-view" class="result-view" hidden>
+            <div class="answer-head">
+              <div>
+                <span>ANSWER</span>
+                <h3>检索结果</h3>
+              </div>
+              <span id="confidence-label" class="confidence-label"></span>
+            </div>
+            <pre id="answer-text" class="answer-text"></pre>
+            <div id="node-chips" class="node-chips"></div>
+            <div class="evidence-heading">
+              <h3>原文证据</h3>
+              <span id="evidence-count"></span>
+            </div>
+            <div id="evidence-list" class="evidence-list"></div>
+          </div>
+        </section>
+
+        <aside class="panel graph-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="step-number">MAP</span>
+              <h2>图谱预览</h2>
+            </div>
+            <span id="graph-count" class="counter">0 / 0</span>
+          </div>
+          <div class="graph-canvas-wrap">
+            <svg id="graph-canvas" viewBox="0 0 760 470" role="img" aria-label="知识图谱预览"></svg>
+            <div id="graph-placeholder" class="graph-placeholder">
+              <span>构建后在这里查看节点关系</span>
+            </div>
+          </div>
+          <div id="node-inspector" class="node-inspector">
+            <span>SELECTED NODE</span>
+            <h3>点击节点查看说明</h3>
+            <p>图谱节点均可回溯到原始文档证据。</p>
+          </div>
+          <div class="graph-legend">
+            <span><i class="legend-topic"></i>主题</span>
+            <span><i class="legend-concept"></i>概念</span>
+            <span><i class="legend-term"></i>术语</span>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer>
+      <span>RAGforyl · Evidence first, graph second.</span>
+      <a href="/docs" target="_blank" rel="noreferrer">API 文档</a>
+    </footer>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/assets/app.js" defer></script>
+  </body>
+</html>
